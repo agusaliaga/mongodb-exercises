@@ -1,0 +1,136 @@
+MONGODB EXERCISES
+
+$mongo
+
+======================
+create a new database
+======================
+
+use restaurants
+
+=====================
+create new collection
+=====================
+
+db.createCollection("rst")
+show collections
+
+======================
+import json collection
+======================
+
+$mongoimport --db restaurants --collection rst --file /home/agustina/Escritorio/da/restaurants.json
+
+=======================================
+display all documents in the collection 
+=======================================
+
+db.rst.find();
+db.rst.find().pretty();
+
+=============================================================================================
+Write a MongoDB query to display the fields restaurant_id, name, borough and cuisine, but exclude the field _id for all the documents in the collection restaurant.
+=============================================================================================
+
+db.rst.find({},{"restaurant_id" : 1,"name":1,"borough":1,"cuisine":1,"_id":0});
+
+=============================================================================================
+find restaurants where the "boroughs" is "Bronx" *
+=============================================================================================
+
+db.rst.find({"borough": "Bronx"}).pretty();
+
+=============================================================================================
+display the first 5 restaurants which is in the borough Bronx
+=============================================================================================
+
+db.rst.find({"borough": "Bronx"}).limit(5);
+
+=============================================================================================
+restaurants that achieved a score more than 90 
+=============================================================================================
+
+db.rst.find({grades : { $elemMatch:{"score":{$gt : 90}}}});
+
+=============================================================================================
+* restaurants that achieved a score more than 80 less than 100 *
+=============================================================================================
+
+db.rst.find({grades : { $elemMatch:{"score":{$gt : 80 , $lt :100}}}});
+
+=============================================================================================
+Write a MongoDB query to find the restaurants that do not prepare any cuisine of 'American' and their grade score more than 70 and lattitude less than -65.754168. (lattitude is element 0)
+=============================================================================================
+
+db.rst.find({$and:[
+{"cuisine" : {$ne :"American "}},
+{"grades.score" : {$gt : 70}},
+{"address.coord.0" : {$lt : -65.754168}}
+]
+}
+);
+
+=============================================================================================
+Filter Array Columns longitude is element 1 in the list (lattitude is element 0)
+Write a MongoDB query to find the restaurants which do not prepare any cuisine of American and achieved a score more than 70 and located in the longitude less than -65.754168.
+=============================================================================================
+
+db.rst.find(
+{
+"cuisine" : {$ne : "American "},
+"grades.score" :{$gt: 70},
+"address.coord.1" : {$lt : -65.754168}
+}
+);
+
+=============================================================================================
+Write a MongoDB query to find the restaurant Id, name, borough and cuisine for those restaurants which contain 'Wil' as first three letters for its name.
+=============================================================================================
+
+db.rst.find(
+{name: /^Wil/},
+{
+"restaurant_id" : 1,
+"name":1,"borough":1,
+"cuisine" :1
+}
+);
+
+=============================================================================================
+Write a MongoDB query to find the restaurant Id, name, borough and cuisine for those restaurants which contain 'Reg' as three letters somewhere in its name.
+=============================================================================================
+
+db.rst.find(
+{"name": /.*Reg.*/},
+{
+"restaurant_id" : 1,
+"name":1,"borough":1,
+"cuisine" :1
+}
+
+=============================================================================================
+Find restaurant name, borough, longitude and latitude and cuisine for those restaurants which contain 'Mad' as first three letters of its name
+=============================================================================================
+
+db.rst.find(
+{name: /^Mad/},
+{
+"restaurant_id" : 1,
+"name":1,"borough":1,
+"cuisine" :1
+}
+);
+
+=============================================================================================
+Write a MongoDB query to find the restaurants which belong to the borough Bronx and prepared either American or Chinese dish.
+=============================================================================================
+db.rst.find(
+{ 
+"borough": "Bronx" , 
+$or : [
+{ "cuisine" : "American " },
+{ "cuisine" : "Chinese" }
+] 
+} 
+);
+
